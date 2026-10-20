@@ -56,8 +56,7 @@ int CTRUPDATE_Popup(uint32_t down, ctrupdate_popup *p)
     case CTRUPDATE_INSTALL_DONE:
         p->title = "Updated";
         snprintf(p->text, sizeof p->text, "Version %s is installed.", CTRUPDATE_Latest());
-        p->hint = CTRUPDATE_IsInstalledTitle() ? "Press A to return to the HOME Menu"
-                                               : "Press A to return to the Homebrew Launcher";
+        p->hint = CTRUPDATE_IsInstalledTitle() ? "A: Back to the HOME Menu" : "A: Back to the Homebrew Launcher";
         p->detail = "";
         break;
     case CTRUPDATE_INSTALL_FAILED:
