@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: make -j"$(nproc)"
+      - name: Build the example
+        run: make -C example
+      - name: Host tests
+        run: |
+          apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev
+          make -f tests/Makefile.host CC=gcc build/host_test
+          ./build/host_test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lib3dsupdate
+          path: |
+            lib/lib3dsupdate.a
+            include/3dsupdate.h

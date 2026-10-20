@@ -1,0 +1,18 @@
+# Desktop builds: unit tests, and the full network path against GitHub.
+MB      := vendor/mbedtls
+MZ      := vendor/miniz
+MZFLAGS := -DMINIZ_NO_TIME -DMINIZ_NO_ZLIB_APIS -DMINIZ_NO_ZLIB_COMPATIBLE_NAMES
+CFLAGS  := -O1 -Wall -Iinclude -Isource -Iconfig -I$(MB)/include -I$(MB)/library -I$(MZ) $(MZFLAGS) \
+           -DMBEDTLS_CONFIG_FILE=\"mbedtls_3dsupdate.h\" -Wno-unused-parameter
+LIBSRCS := source/3dsupdate.c source/3dsupdate_http.c source/3dsupdate_version.c source/3dsupdate_extract.c \
+           source/3dsupdate_popup.c tests/host_sys.c $(MZ)/miniz.c $(wildcard $(MB)/library/*.c)
+
+all: build/host_test build/host_check
+
+build/host_test: tests/host_test.c source/3dsupdate_version.c source/3dsupdate_extract.c tests/host_sys.c $(MZ)/miniz.c
+	@mkdir -p build
+	$(CC) $(CFLAGS) -w $^ -o $@
+
+build/host_check: tests/host_check.c $(LIBSRCS)
+	@mkdir -p build
+	$(CC) $(CFLAGS) -w $^ -lpthread -o $@
